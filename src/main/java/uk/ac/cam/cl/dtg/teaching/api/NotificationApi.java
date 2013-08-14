@@ -164,16 +164,20 @@ public interface NotificationApi {
 		 * Recommended usage as follows:
 		 * 
 		 * NotificationApiWrapper n = new NotificationApiWrapper(dashboardUrl, apiKey);
-		 * GetNotification data = n.getNotifications(0, 10, "dashboard", "userCrsid1", "exampleApiKey");
-		 * if (data == null) log.error("Internal server error: could not get notifications"); 
+		 * GetNotification data = n.getNotifications(0, 10, "dashboard", "userCrsid1");
+		 * if (data == null) {
+		 *     log.error("Internal server error: could not get notifications")
+		 * } else {
+		 *     // Manipulate data
+		 * } 
 		 * 
 		 */
 		
-		public GetNotification getNotifications(int offset, int limit, String section, String userId, String key) {
+		public GetNotification getNotifications(int offset, int limit, String section, String userId) {
 			
 			try {
 				ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
-				GetNotification gn = c.createProxy(NotificationApi.class).getNotification(offset, limit, section, userId, key);
+				GetNotification gn = c.createProxy(NotificationApi.class).getNotification(offset, limit, section, userId, apiKey);
 				
 				if (gn == null) {
 					log.error("Internal server error: could not get notifications");
@@ -200,7 +204,11 @@ public interface NotificationApi {
 		 * Recommended usage as follows:
 		 * 
 		 * NotificationApiWrapper n = new NotificationApiWrapper(dashboardUrl, apiKey);
-		 * if (!n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2")) log.error("Internal server error: could not create notification");
+		 * if (!n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2")) { 
+		 *     log.error("Internal server error: could not create notification")
+		 * } else {
+		 *     log.info("Successfully create notification");
+		 * }
 		 * 
 		 */
 		
