@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public interface NotificationApi {
 	
 	// Get
+	
 	@GET @Path("/api/notifications")
 	public GetNotification getNotification(@QueryParam("offset") int offset,
 										   @QueryParam("limit") int limit,
@@ -29,13 +30,12 @@ public interface NotificationApi {
 		private int offset;
 		private int total;
 		private boolean read;
-		// TODO refactor to user class
-		private Object user;
+		private User user;
 		private String section;
 		private Set<Notification> notifications;
 		
-		// TODO refactor data and formErrors into classes
 		private String error;
+		// TODO refactor data and formErrors into classes
 		private Object data;
 		private Object formErrors;
 		
@@ -54,7 +54,7 @@ public interface NotificationApi {
 		public void setRead(boolean read) {this.read = read;}
 		
 		public Object getUser() {return user;}
-		public void setUser(Object user) {this.user = user;}
+		public void setUser(User user) {this.user = user;}
 		
 		public String getSection() {return section;}
 		public void setSection(String section) {this.section = section;}
@@ -109,6 +109,20 @@ public interface NotificationApi {
 		public String getTimestamp() {return timestamp;}
 		public void setTimestamp(String timestamp) {this.timestamp = timestamp;}
 	}
+	
+	public static class User {
+		private String crsid;
+		private String name;
+		
+		// Setters and getters
+		
+		public String getCrsid() {return crsid;}
+		public void setCrsid(String crsid) {this.crsid = crsid;}
+		
+		public String getName() {return name;}
+		public void setName(String name) {this.name = name;}
+		
+	}
 
 	// Create
 	
@@ -123,8 +137,8 @@ public interface NotificationApi {
 	public static class CreateNotification {
 		private String redirectTo;
 		
-		// TODO refactor data and formErrors into classes
 		private String error;
+		// TODO refactor data and formErrors into classes
 		private Object data;
 		private Object formErrors;
 		
