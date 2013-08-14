@@ -218,10 +218,11 @@ public interface NotificationApi {
 		 * Recommended usage as follows:
 		 * 
 		 * NotificationApiWrapper n = new NotificationApiWrapper(dashboardUrl, apiKey);
-		 * if (!n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2")) { 
-		 *     log.error("Internal server error: could not create notification")
-		 * } else {
-		 *     log.info("Successfully create notification");
+		 * try {
+		 *     n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2"));
+		 *     log.info("Successfully created notification");
+		 * } catch (NotificationException e) {
+		 *     log.error(e.getMessage());
 		 * }
 		 * 
 		 */
