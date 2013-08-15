@@ -218,35 +218,28 @@ public interface NotificationApi {
 		 * Recommended usage as follows:
 		 * 
 		 * NotificationApiWrapper n = new NotificationApiWrapper(dashboardUrl, apiKey);
-		 * if (!n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2")) { 
-		 *     log.error("Internal server error: could not create notification")
-		 * } else {
-		 *     log.info("Successfully create notification");
+		 * try {
+		 *     n.createNotification("Test message", "dashboard", "example.com", "userCrsid1,userCrsid2"));
+		 *     log.info("Successfully created notification");
+		 * } catch (NotificationException e) {
+		 *     log.error(e.getMessage());
 		 * }
 		 * 
 		 */
 		
-		public boolean createNotification(String message, String section, String link, String users) {
-			try {
-				ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
-				CreateNotification cn = c.createProxy(NotificationApi.class).createNotification(message, section, link, users, apiKey);
-				
-				if (cn.getRedirectTo() != null) {
-					return true;
-				} else if (cn.getError() != null) {
-					log.error(cn.getError());
-					return false;
-				} else if (cn.getFormErrors() != null) {
-					// TODO
-					log.error("Form errors");
-					return false;
-				}
-				
-				return false;
-				
-			} catch (Exception e) {
-				log.error(e.getMessage());
-				return false;
+		public void createNotification(String message, String section, String link, String users) throws NotificationException {
+			ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
+			CreateNotification cn = c.createProxy(NotificationApi.class).createNotification(message, section, link, users, apiKey);
+
+			if (cn.getRedirectTo() != null) {
+				return;
+			} else if (cn.getError() != null) {
+				log.error(cn.getError());
+				throw new NotificationException(cn.getError());
+			} else if (cn.getFormErrors() != null) {
+				// TODO
+				log.error("Form errors");
+				throw new NotificationException("Form errors");
 			}
 
 		}
