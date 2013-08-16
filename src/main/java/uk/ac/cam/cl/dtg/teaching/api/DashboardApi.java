@@ -33,6 +33,7 @@ public interface DashboardApi {
 	public static class MenuItem {
 		private String name;
 		private String icon;
+		private String section;
 		private int iconType;
 		private int notificationCount;
 		private List<SubMenuItem> links;
@@ -42,6 +43,9 @@ public interface DashboardApi {
 		
 		public String getIcon() {return icon;}
 		public void setIcon(String icon) {this.icon = icon;}
+		
+		public String getSection() {return section;}
+		public void setSection(String section) {this.section = section;}
 		
 		public int getIconType() {return iconType;}
 		public void setIconType(int iconType) {this.iconType = iconType;}

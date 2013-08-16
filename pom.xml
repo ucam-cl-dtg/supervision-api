@@ -5,7 +5,7 @@
 	<artifactId>supervision-api</artifactId>
 	<version>1.0.2-SNAPSHOT</version>
 	<name>API for the supervisions DTG project</name>
-	<packaging>ear</packaging>
+	<packaging>jar</packaging>
 
 	<licenses>
 		<license>
