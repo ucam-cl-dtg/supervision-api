@@ -21,6 +21,7 @@ public interface NotificationApi {
 	public GetNotification getNotification(@QueryParam("offset") int offset,
 										   @QueryParam("limit") int limit,
 										   @QueryParam("section") String section,
+										   @QueryParam("foreignId") String foreignId,
 										   // Authentication
 										   @QueryParam("userId") String userId,
 										   @QueryParam("key") String key);
@@ -32,6 +33,7 @@ public interface NotificationApi {
 		private boolean read;
 		private User user;
 		private String section;
+		private String foreignId;
 		private Set<Notification> notifications;
 		
 		private String error;
@@ -67,6 +69,9 @@ public interface NotificationApi {
 		
 		public Object getData() {return data;}
 		public void setData(Object data) {this.data = data;}
+		
+		public String getForeignId() {return foreignId;}
+		public void setForeignId(String foreignId) {this.foreignId = foreignId;}
 		
 		public Object getFormErrors() {return formErrors;}
 		public void setFormErrors(Object formErrors) {this.formErrors = formErrors;}
@@ -131,6 +136,7 @@ public interface NotificationApi {
 												 @FormParam("section") String section,
 												 @FormParam("link") String link,
 												 @FormParam("users") String users,
+												 @FormParam("foreignId") String foreignId,
 												 // Authentication
 												 @QueryParam("key") String key);
 	
@@ -188,10 +194,13 @@ public interface NotificationApi {
 		 */
 		
 		public GetNotification getNotifications(int offset, int limit, String section, String userId) {
-			
+			return getNotificationsWithForeignId(offset, limit, section, userId, "");
+		}
+		
+		public GetNotification getNotificationsWithForeignId(int offset, int limit, String section, String userId, String foreignId) {
 			try {
 				ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
-				GetNotification gn = c.createProxy(NotificationApi.class).getNotification(offset, limit, section, userId, apiKey);
+				GetNotification gn = c.createProxy(NotificationApi.class).getNotification(offset, limit, section, foreignId, userId, apiKey);
 				
 				if (gn == null) {
 					log.error("Internal server error: could not get notifications");
@@ -211,9 +220,7 @@ public interface NotificationApi {
 				log.error(e.getMessage());
 				return null;
 			}
-			
 		}
-		
 		/*
 		 * Recommended usage as follows:
 		 * 
@@ -228,8 +235,12 @@ public interface NotificationApi {
 		 */
 		
 		public void createNotification(String message, String section, String link, String users) throws NotificationException {
+			createNotificationWithForeignId(message, section, link, users, "");
+		}
+		
+		public void createNotificationWithForeignId(String message, String section, String link, String users, String foreignId) throws NotificationException {
 			ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
-			CreateNotification cn = c.createProxy(NotificationApi.class).createNotification(message, section, link, users, apiKey);
+			CreateNotification cn = c.createProxy(NotificationApi.class).createNotification(message, section, link, users, foreignId, apiKey);
 
 			if (cn.getRedirectTo() != null) {
 				return;
@@ -241,7 +252,6 @@ public interface NotificationApi {
 				log.error("Form errors");
 				throw new NotificationException("Form errors");
 			}
-
 		}
 		
 	}
