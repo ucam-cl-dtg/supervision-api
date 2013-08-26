@@ -235,7 +235,7 @@ public interface NotificationApi {
 		 */
 		
 		public void createNotification(String message, String section, String link, String users) throws NotificationException {
-			createNotificationWithForeignId(message, section, link, users, "");
+			createNotificationWithForeignId(message, section, link, users, null);
 		}
 		
 		public void createNotificationWithForeignId(String message, String section, String link, String users, String foreignId) throws NotificationException {
@@ -249,8 +249,8 @@ public interface NotificationApi {
 				throw new NotificationException(cn.getError());
 			} else if (cn.getFormErrors() != null) {
 				// TODO
-				log.error("Form errors");
-				throw new NotificationException("Form errors");
+				log.error("Form errors "+cn.getFormErrors());
+				throw new NotificationException("Form errors "+cn.getFormErrors());
 			}
 		}
 		
