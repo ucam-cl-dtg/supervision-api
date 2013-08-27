@@ -1,5 +1,9 @@
 package uk.ac.cam.cl.dtg.teaching.api;
 
+import org.jboss.resteasy.client.ClientRequestFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Set;
 
 import javax.ws.rs.FormParam;
@@ -8,10 +12,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.client.ClientRequestFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface NotificationApi {
 	
