@@ -17,17 +17,25 @@ public interface DashboardApi {
 	
 	public static class Settings {
 		private List<MenuItem> sidebar;
-		private Map<String, Object> user;
+		private Map<String, Object> settings;
+		private String user;
 		private String error;
+		private List<String> keys;
 		
 		public List<MenuItem> getSidebar() {return sidebar;}
 		public void setSidebar(List<MenuItem> sidebar) {this.sidebar = sidebar;}
 		
-		public Map<String, Object> getUser() {return user;}
-		public void setUser(Map<String, Object> user) {this.user = user;}
+		public Map<String, Object> getSettings() {return settings;}
+		public void setSettings(Map<String, Object> settings) {this.settings = settings;}
 		
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
+		
+		public String getUser() {return user;}
+		public void setUser(String user) {this.user = user;}
+		
+		public List<String> getKeys() {return keys;}
+		public void setKeys(List<String> keys) {this.keys = keys;}
 	}
 	
 	public static class MenuItem {
