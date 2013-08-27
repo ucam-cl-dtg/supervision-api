@@ -1,7 +1,10 @@
 package uk.ac.cam.cl.dtg.teaching.api;
 
-import java.util.List;
-import java.util.SortedSet;
+import org.jboss.resteasy.client.ClientRequestFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -9,10 +12,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.UriBuilder;
-
-import org.jboss.resteasy.client.ClientRequestFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface NotificationApi {
 	
@@ -35,7 +34,7 @@ public interface NotificationApi {
 		private User user;
 		private String section;
 		private String foreignId;
-		private List<Notification> notifications;
+		private Set<Notification> notifications;
 		
 		private String error;
 		// TODO refactor data and formErrors into classes
@@ -62,8 +61,8 @@ public interface NotificationApi {
 		public String getSection() {return section;}
 		public void setSection(String section) {this.section = section;}
 		
-		public List<Notification> getNotifications() {return notifications;}
-		public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
+		public Set<Notification> getNotifications() {return notifications;}
+		public void setNotifications(Set<Notification> notifications) {this.notifications = notifications;}
 		
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
