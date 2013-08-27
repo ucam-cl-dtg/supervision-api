@@ -37,9 +37,8 @@ public interface NotificationApi {
 		private Set<Notification> notifications;
 		
 		private String error;
-		// TODO refactor data and formErrors into classes
-		private Object data;
-		private Object formErrors;
+		private GetData data;
+		private GetFormError formErrors;
 		
 		// Setters and getters
 		
@@ -67,14 +66,14 @@ public interface NotificationApi {
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
 		
-		public Object getData() {return data;}
-		public void setData(Object data) {this.data = data;}
+		public GetData getData() {return data;}
+		public void setData(GetData data) {this.data = data;}
 		
 		public String getForeignId() {return foreignId;}
 		public void setForeignId(String foreignId) {this.foreignId = foreignId;}
 		
-		public Object getFormErrors() {return formErrors;}
-		public void setFormErrors(Object formErrors) {this.formErrors = formErrors;}
+		public GetFormError getFormErrors() {return formErrors;}
+		public void setFormErrors(GetFormError formErrors) {this.formErrors = formErrors;}
 
 	}
 	
@@ -115,6 +114,44 @@ public interface NotificationApi {
 		public void setTimestamp(String timestamp) {this.timestamp = timestamp;}
 	}
 	
+	public static class GetFormError {
+		private String[] limit;
+		private String[] offset;
+		private String[] section;
+		private String[] foreignId;
+		
+		public String[] getLimit() {return limit;}
+		public void setLimit(String[] limit) {this.limit = limit;}
+		
+		public String[] getOffset() {return offset;}
+		public void setOffset(String[] offset) {this.offset = offset;}
+		
+		public String[] getSection() {return section;}
+		public void setSection(String[] section) {this.section = section;}
+		
+		public String[] getForeignId() {return foreignId;}
+		public void setForeignId(String[] foreignId) {this.foreignId = foreignId;}
+	}
+	
+	public static class GetData {
+		private String offset;
+		private String limit;
+		private String section;
+		private String foreignId;
+		
+		public String getOffset() {return offset;}
+		public void setOffset(String offset) {this.offset = offset;}
+		
+		public String getLimit() {return limit;}
+		public void setLimit(String limit) {this.limit = limit;}
+		
+		public String getSection() {return section;}
+		public void setSection(String section) {this.section = section;}
+		
+		public String getForeignId() {return foreignId;}
+		public void setForeignId(String foreignId) {this.foreignId = foreignId;}
+	}
+	
 	public static class User {
 		private String crsid;
 		private String name;
@@ -127,7 +164,7 @@ public interface NotificationApi {
 		public String getName() {return name;}
 		public void setName(String name) {this.name = name;}
 		
-	}
+	}	
 
 	// Create
 	
@@ -144,9 +181,8 @@ public interface NotificationApi {
 		private String redirectTo;
 		
 		private String error;
-		// TODO refactor data and formErrors into classes
-		private Object data;
-		private Object formErrors;
+		private CreateData data;
+		private CreateFormError formErrors;
 		
 		// Setters and getters
 		
@@ -156,12 +192,56 @@ public interface NotificationApi {
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
 		
-		public Object getData() {return data;}
-		public void setData(Object data) {this.data = data;}
+		public CreateData getData() {return data;}
+		public void setData(CreateData data) {this.data = data;}
 		
-		public Object getFormErrors() {return formErrors;}
-		public void setFormErrors(Object formErrors) {this.formErrors = formErrors;}
+		public CreateFormError getFormErrors() {return formErrors;}
+		public void setFormErrors(CreateFormError formErrors) {this.formErrors = formErrors;}
 		
+	}
+	
+	public static class CreateFormError {
+		private String[] message;
+		private String[] users;
+		private String[] link;
+		private String[] section;
+		
+		// Setters and getters
+		
+		public String[] getMessage() {return message;}
+		public void setMessage(String[] message) {this.message = message;}
+		
+		public String[] getUsers() {return users;}
+		public void setUsers(String[] users) {this.users = users;}
+		
+		public String[] getLink() {return link;}
+		public void setLink(String[] link) {this.link = link;}
+		
+		public String[] getSection() {return section;}
+		public void setSection(String[] section) {this.section = section;}
+	}
+	
+	public static class CreateData {
+		private String message;
+		private String section;
+		private String link;
+		private String users;
+		private String foreignId;
+		
+		public String getMessage() {return message;}
+		public void setMessage(String message) {this.message = message;}
+		
+		public String getSection() {return section;}
+		public void setSection(String section) {this.section = section;}
+		
+		public String getLink() {return link;}
+		public void setLink(String link) {this.link = link;}
+		
+		public String getUsers() {return users;}
+		public void setUsers(String users) {this.users = users;}
+		
+		public String getForeignId() {return foreignId;}
+		public void setForeignId(String foreignId) {this.foreignId = foreignId;}
 	}
 	
 	// Helper methods for API
@@ -198,25 +278,31 @@ public interface NotificationApi {
 		}
 		
 		public GetNotification getNotificationsWithForeignId(int offset, int limit, String section, String userId, String foreignId) {
+			
 			try {
 				ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
 				GetNotification gn = c.createProxy(NotificationApi.class).getNotification(offset, limit, section, foreignId, userId, apiKey);
 				
 				if (gn == null) {
 					log.error("Internal server error: could not get notifications");
-					return null;
+					throw new NotificationException("Internal server error: could not get notifications");
 				} else if (gn.getError() != null) {
 					log.error(gn.getError());
-					return null;
+					throw new NotificationException(gn.getError());
 				} else if (gn.getFormErrors() != null) {
-					// TODO
-					log.error("Form errors");
-					return null;
+					// TODO refactor to loop through arrays
+					String errors = gn.getFormErrors().getForeignId().toString() +
+									gn.getFormErrors().getLimit().toString() +
+									gn.getFormErrors().getOffset().toString() +
+									gn.getFormErrors().getSection().toString();
+			
+					log.error("Form errors: " + errors);
+					throw new NotificationException("Form errors " + errors);
 				}
 				
 				return gn;
 				
-			} catch (Exception e) {
+			} catch (NotificationException e) {
 				log.error(e.getMessage());
 				return null;
 			}
@@ -248,9 +334,14 @@ public interface NotificationApi {
 				log.error(cn.getError());
 				throw new NotificationException(cn.getError());
 			} else if (cn.getFormErrors() != null) {
-				// TODO
-				log.error("Form errors "+cn.getFormErrors());
-				throw new NotificationException("Form errors "+cn.getFormErrors());
+				// TODO refactor to loop through arrays
+				String errors = cn.getFormErrors().getLink().toString() +
+								cn.getFormErrors().getMessage().toString() +
+								cn.getFormErrors().getSection().toString() +
+								cn.getFormErrors().getUsers().toString();
+				
+				log.error("Form errors: " + errors);
+				throw new NotificationException("Form errors " + errors);
 			}
 		}
 		
