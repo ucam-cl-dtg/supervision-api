@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.dtg.teaching.api;
 
-import java.util.Set;
+import java.util.List;
+import java.util.SortedSet;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -34,7 +35,7 @@ public interface NotificationApi {
 		private User user;
 		private String section;
 		private String foreignId;
-		private Set<Notification> notifications;
+		private List<Notification> notifications;
 		
 		private String error;
 		// TODO refactor data and formErrors into classes
@@ -61,8 +62,8 @@ public interface NotificationApi {
 		public String getSection() {return section;}
 		public void setSection(String section) {this.section = section;}
 		
-		public Set<Notification> getNotifications() {return notifications;}
-		public void setNotifications(Set<Notification> notifications) {this.notifications = notifications;}
+		public List<Notification> getNotifications() {return notifications;}
+		public void setNotifications(List<Notification> notifications) {this.notifications = notifications;}
 		
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
