@@ -19,6 +19,7 @@ public interface DashboardApi {
 		private List<MenuItem> sidebar;
 		private Map<String, Object> settings;
 		private String user;
+		private String projectUrl;
 		private String error;
 		private List<String> keys;
 		
@@ -36,6 +37,9 @@ public interface DashboardApi {
 		
 		public List<String> getKeys() {return keys;}
 		public void setKeys(List<String> keys) {this.keys = keys;}
+		
+		public String getProjectUrl() {return projectUrl;}
+		public void setProjectUrl(String projectUrl) {this.projectUrl = projectUrl;}
 	}
 	
 	public static class MenuItem {
