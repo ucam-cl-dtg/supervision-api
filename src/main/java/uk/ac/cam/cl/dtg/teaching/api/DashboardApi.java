@@ -7,13 +7,21 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.UriBuilder;
+
+import org.jboss.resteasy.client.ClientRequestFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.ac.cam.cl.dtg.teaching.api.DashboardException;
 
 public interface DashboardApi {
 	
-	// Settings
+	// Settings	
+	@GET @Path("/api/account/{crsid}")
+	public Settings getSettings(@PathParam("crsid") String userId, @QueryParam("key") String key);
 	
-	@GET @Path("/api/account/")
-	public Settings getSettings(@QueryParam("userId") String user, @QueryParam("key") String key);
+	
 	
 	public static class Settings {
 		private List<MenuItem> sidebar;
@@ -110,6 +118,37 @@ public interface DashboardApi {
 		
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
+	}
+	
+	public static class DashboardApiWrapper{
+		private String dashboardUrl;
+		private String apiKey;
+		
+		private static Logger log = LoggerFactory.getLogger(DashboardApi.class);
+		
+		public DashboardApiWrapper(String dashboardUrl, String apiKey){
+			this.dashboardUrl = dashboardUrl;
+			this.apiKey = apiKey;
+		}
+		
+		public Settings getUserSettings(String crsid){
+			try{
+				ClientRequestFactory c = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build());
+				Settings s = c.createProxy(DashboardApi.class).getSettings(crsid, apiKey);
+				
+				if(s == null){
+					throw new DashboardException("Internal server error: couldn't get user settings");
+				} else if(s.getError() != null) {
+					throw new DashboardException(s.getError());
+				}
+				
+				return s;
+			} catch (DashboardException e) {
+				log.error(e.getMessage());
+				return null;
+			}
+		}
+		
 	}
 	
 }
