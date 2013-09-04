@@ -17,9 +17,22 @@ public interface QuestionsApi {
 
     @GET
     @Path("/api/sets/{id}")
-    public QuestionSet getQuestionSet(@PathParam("id") long id,
+    public GetQuestionSet getQuestionSet(@PathParam("id") long id,
                                       @QueryParam("key") String key,
                                       @QueryParam("impostorUser") String user);
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class GetQuestionSet {
+        private QuestionSet set;
+
+        public QuestionSet getSet() {
+            return set;
+        }
+
+        public void setSet(QuestionSet set) {
+            this.set = set;
+        }
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class QuestionSet {
@@ -90,7 +103,9 @@ public interface QuestionsApi {
         public QuestionSet getQuestionSet(long id, String impostor) {
             QuestionSet set = null;
             try {
-                set = api.getQuestionSet(id, this.apiKey, impostor);
+                GetQuestionSet req = api.getQuestionSet(id, this.apiKey, impostor);
+                if (req != null)
+                    set = req.getSet();
             } catch (Exception e) {
                 logError(e);
             }

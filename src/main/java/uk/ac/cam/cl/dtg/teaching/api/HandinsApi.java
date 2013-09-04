@@ -13,8 +13,8 @@ public interface HandinsApi {
     @GET
     @Path("/api/bins/{id}")
     public GetBin getBin(@PathParam("id") long id,
-                      @QueryParam("key") String key,
-                      @QueryParam("userId") String user);
+                         @QueryParam("key") String key,
+                         @QueryParam("userId") String user);
 
     @POST
     @Path("/api/bins")
@@ -23,10 +23,18 @@ public interface HandinsApi {
                          @FormParam("key") String key);
 
     @POST
-    @Path("/api/bins/{id}")
+    @Path("/api/bins/{id}/permissions")
     public Response setBinAccessPermissions(
             @PathParam("id") long id,
-            @FormParam("users[]") String[] users);
+            @FormParam("users[]") String[] users,
+            @QueryParam("key") String key);
+
+    @POST
+    @Path("/api/bins/{id}/questions/import")
+    public Response importQuestionSet(@PathParam("id") long binId,
+                                      @FormParam("questionSetId") long questionSetId,
+                                      @QueryParam("key") String key,
+                                      @QueryParam("impostorUser") String impostor);
 
     public static class GetBin {
         Bin bin;
@@ -115,13 +123,25 @@ public interface HandinsApi {
 
         public void setUsers(long binId, String[] users) {
             try {
-                api.setBinAccessPermissions(binId, users);
+                api.setBinAccessPermissions(binId, users, this.apiKey);
             } catch (Exception e) {
                 logError(e);
             }
         }
         public void setUsers(Bin bin, String[] users) {
             setUsers(bin.getId(), users);
+        }
+
+        public void importQuestionSet(long binId, long questionSetId, String impostor) {
+            try {
+                api.importQuestionSet(binId, questionSetId, this.apiKey, impostor);
+            } catch (Exception e) {
+                logError(e);
+            }
+
+        }
+        public void importQuestionSet(Bin bin, long questionSetId, String impostor) {
+            importQuestionSet(bin.getId(), questionSetId, impostor);
         }
 
 
