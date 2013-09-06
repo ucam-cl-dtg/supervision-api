@@ -119,6 +119,24 @@ public interface DashboardApi {
 		public String getError() {return error;}
 		public void setError(String error) {this.error = error;}
 	}
+
+    @GET
+    @Path("/api/account/{crsid}/doses/{inst}")
+    public GetDos getDoses(@PathParam("crsid") String crsid,
+                           @PathParam("inst") String inst,
+                           @QueryParam("key") String key);
+
+    public static class GetDos {
+        private List<String> doses;
+
+        public List<String> getDoses() {
+            return doses;
+        }
+
+        public void setDoses(List<String> doses) {
+            this.doses = doses;
+        }
+    }
 	
 	public static class DashboardApiWrapper{
 		private String dashboardUrl;
@@ -148,6 +166,18 @@ public interface DashboardApi {
 				return null;
 			}
 		}
+
+        public List<String> getDosesForInstitution(String crsid, String inst) {
+            try {
+                DashboardApi api = new ClientRequestFactory(UriBuilder.fromUri(dashboardUrl).build()).createProxy(DashboardApi.class);
+                GetDos req = api.getDoses(crsid, inst, this.apiKey);
+                if (req != null)
+                    return req.getDoses();
+            } catch (Exception e)  {
+                log.error(e.getMessage());
+            }
+            return null;
+        }
 		
 	}
 	
