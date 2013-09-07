@@ -6,7 +6,7 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>supervision-api</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.6</version>
 	<name>API for the supervisions DTG project</name>
 	<packaging>jar</packaging>
 
