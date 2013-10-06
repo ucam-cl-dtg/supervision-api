@@ -144,6 +144,10 @@ public interface HandinsApi {
             importQuestionSet(bin.getId(), questionSetId, impostor);
         }
 
+		public String getHandinsUrl() {
+			return handinsUrl;
+		}
+
 
 
     }

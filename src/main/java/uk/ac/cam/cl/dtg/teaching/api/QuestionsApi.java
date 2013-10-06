@@ -112,5 +112,11 @@ public interface QuestionsApi {
 
             return set;
         }
+
+		public String getHandinsUrl() {
+			return handinsUrl;
+		}
+        
+        
     }
 }
