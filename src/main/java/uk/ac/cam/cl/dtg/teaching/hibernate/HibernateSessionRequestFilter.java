@@ -1,6 +1,10 @@
 package uk.ac.cam.cl.dtg.teaching.hibernate;
 
 import java.io.IOException;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,8 +31,7 @@ public class HibernateSessionRequestFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 
 		if (hibernateUtil.isReady()) {
-			// this should ensure that the transaction is clean i.e. it will
-			// roll back if necessary
+			hibernateUtil.rollback();			
 			hibernateUtil.getSF().getCurrentSession().getTransaction().begin();
 		}
 
@@ -49,5 +52,18 @@ public class HibernateSessionRequestFilter implements Filter {
 
 	@Override
 	public void destroy() {
+		hibernateUtil.getSession().close();
+		hibernateUtil.close();
+		
+		Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            try {
+                DriverManager.deregisterDriver(driver);
+            } catch (SQLException e) {
+            	
+            }
+
+        }
 	}
 }
