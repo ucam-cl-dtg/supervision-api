@@ -20,7 +20,6 @@ public class HibernateSessionRequestFilter implements Filter {
 
 	private HibernateUtil hibernateUtil;
 
-	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		hibernateUtil = HibernateUtil.getInstance();
@@ -31,20 +30,25 @@ public class HibernateSessionRequestFilter implements Filter {
 			FilterChain chain) throws IOException, ServletException {
 
 		if (hibernateUtil.isReady()) {
-			hibernateUtil.rollback();			
-			hibernateUtil.getSF().getCurrentSession().getTransaction().begin();
+			hibernateUtil.getSF().getCurrentSession().beginTransaction();
 		}
 
 		chain.doFilter(request, response);
 
 		if (hibernateUtil.isReady()) {
-			Transaction t = hibernateUtil.getSF().getCurrentSession().getTransaction();
-			if (t.isActive()) {
+			Transaction t = hibernateUtil.getSF().getCurrentSession()
+					.getTransaction();
+			try {
+				t.commit();
+			} catch (HibernateException e) {
 				try {
-					t.commit();
-				}
-				catch (HibernateException e) {
 					t.rollback();
+					throw new HibernateException("Caught exception trying to commit transaction",e);
+				}
+				catch (HibernateException e2) {
+					HibernateException e3 = new HibernateException("Got exception trying to rollback transaction after failure",e2);
+					e3.addSuppressed(e);
+					throw e3;
 				}
 			}
 		}
@@ -54,16 +58,16 @@ public class HibernateSessionRequestFilter implements Filter {
 	public void destroy() {
 		hibernateUtil.getSession().close();
 		hibernateUtil.close();
-		
-		Enumeration<Driver> drivers = DriverManager.getDrivers();
-        while (drivers.hasMoreElements()) {
-            Driver driver = drivers.nextElement();
-            try {
-                DriverManager.deregisterDriver(driver);
-            } catch (SQLException e) {
-            	
-            }
 
-        }
+		Enumeration<Driver> drivers = DriverManager.getDrivers();
+		while (drivers.hasMoreElements()) {
+			Driver driver = drivers.nextElement();
+			try {
+				DriverManager.deregisterDriver(driver);
+			} catch (SQLException e) {
+
+			}
+
+		}
 	}
 }

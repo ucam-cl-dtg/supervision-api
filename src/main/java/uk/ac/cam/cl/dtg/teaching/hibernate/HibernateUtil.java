@@ -3,7 +3,6 @@ package uk.ac.cam.cl.dtg.teaching.hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultComponentSafeNamingStrategy;
 import org.hibernate.service.ServiceRegistry;
@@ -95,25 +94,5 @@ public class HibernateUtil {
 		}
 
 		return session;
-	}
-
-	public void commit() throws HibernateException {
-		Session session = sf.getCurrentSession();
-		if (session.isOpen()) {
-			Transaction t = session.getTransaction();
-			if (t.isActive()) {
-				t.commit();
-			}
-		}
-	}
-
-	public void rollback() throws HibernateException {
-		Session session = sf.getCurrentSession();
-		if (session.isOpen()) {
-			Transaction t = session.getTransaction();
-			if (t.isActive()) {
-				t.rollback();
-			}
-		}
 	}
 }
