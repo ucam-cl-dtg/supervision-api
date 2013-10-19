@@ -520,9 +520,7 @@ public interface NotificationApi {
 					}
 					return gn;
 				} catch (ClientResponseFailure e) {
-					@SuppressWarnings("unchecked")
-					ApiFailureMessage failMessage = (ApiFailureMessage) e
-							.getResponse().getEntity(ApiFailureMessage.class);
+					ApiFailureMessage failMessage = APIUtil.getApiFailureMessage(e);
 					throw new NotificationException(failMessage.getMessage());
 				}
 
