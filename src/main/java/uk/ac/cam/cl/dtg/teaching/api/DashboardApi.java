@@ -13,8 +13,6 @@ import org.jboss.resteasy.client.ClientRequestFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.cam.cl.dtg.teaching.api.DashboardException;
-
 public interface DashboardApi {
 	
 	// Settings	
@@ -164,7 +162,7 @@ public interface DashboardApi {
 			} catch (DashboardException e) {
 				log.error(e.getMessage());
 				return null;
-			}
+			} 
 		}
 
         public List<String> getDosesForInstitution(String crsid, String inst) {
