@@ -5,8 +5,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.DefaultComponentSafeNamingStrategy;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
+import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.service.spi.Stoppable;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +69,14 @@ public class HibernateUtil {
 	private HibernateException heldException = null;
 	
 	public void close() {
+		if (sf instanceof SessionFactoryImpl) {
+			SessionFactoryImpl i = (SessionFactoryImpl)sf;
+			ConnectionProvider p = i.getConnectionProvider();
+			if (p instanceof Stoppable) {
+				log.info("Stopping ConnectionProvider {}",p.toString());
+				((Stoppable)p).stop();
+			}
+		}
 		sf.close();
 	}
 	
