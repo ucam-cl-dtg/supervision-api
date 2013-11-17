@@ -11,9 +11,21 @@ public class ApiFailureMessage {
 		super();
 	}
 
+	private static String getMessage(Throwable t) {
+		StackTraceElement[] trace = t.getStackTrace();
+		String file = trace[0].getFileName();
+		int line = trace[0].getLineNumber();
+		if (t instanceof NullPointerException) {
+			return "NullPointerException at "+file+":"+line;
+		}
+		else {
+			return t.getMessage();
+		}
+	}
+	
 	public ApiFailureMessage(Throwable t) {
 		super();
-		this.message = t.getMessage();
+		this.message = getMessage(t);
 		if (t.getCause() != null) {
 			this.cause = new ApiFailureMessage(t.getCause());
 		}
