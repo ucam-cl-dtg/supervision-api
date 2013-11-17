@@ -81,6 +81,7 @@ public class HibernateSessionRequestFilter implements Filter {
 		while (drivers.hasMoreElements()) {
 			Driver driver = drivers.nextElement();
 			try {
+				log.info("Deregistering {}",driver.toString());
 				DriverManager.deregisterDriver(driver);
 			} catch (SQLException e) {
 
