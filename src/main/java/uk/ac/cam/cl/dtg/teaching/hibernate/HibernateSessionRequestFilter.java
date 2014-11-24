@@ -40,7 +40,7 @@ public class HibernateSessionRequestFilter implements Filter {
 			} catch (HibernateException e) {
 				// failed to get a new transaction - one reason for this might
 				// be that the connection pool is empty
-				log.error("Unable to open a database connection");
+				log.error("Unable to open a database connection",e);
 				((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"Unable to open a database connection");
 				return;
 			}
