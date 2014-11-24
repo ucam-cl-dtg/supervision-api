@@ -41,7 +41,8 @@ public class HibernateSessionRequestFilter implements Filter {
 				// failed to get a new transaction - one reason for this might
 				// be that the connection pool is empty
 				log.error("Unable to open a database connection",e);
-				((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"Unable to open a database connection");
+				log.error("Error: {}",e.getMessage());
+				((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"Unable to open a database connection "+e.getMessage());
 				return;
 			}
 		}
@@ -55,9 +56,10 @@ public class HibernateSessionRequestFilter implements Filter {
 				t.commit();
 			} catch (HibernateException e) {
 				try {
-					log.warn("Caught exception when trying to commit transaction. Rolling back.",e);
+					log.error("Caught exception when trying to commit transaction. Rolling back. (Unable to notify client.)",e);
 					t.rollback();
-					((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"");
+					// We can't send an error to the client here because the response has already gone ;-(
+					//((HttpServletResponse)response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"");					
 					throw new HibernateException(
 							"Caught exception trying to commit transaction", e);
 				} catch (HibernateException e2) {
